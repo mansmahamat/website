@@ -31,7 +31,7 @@ const Metrics = ({ slug }: { slug: string }) => {
         views
       </div>
 
-      <div className="text-rose-100/30">&middot;</div>
+      {/* <div className="text-rose-100/30">&middot;</div>
 
       <div>
         {likesIsError || likesIsLoading ? (
@@ -40,7 +40,7 @@ const Metrics = ({ slug }: { slug: string }) => {
           <InlineMetric key={likes} stat={likes} />
         )}{" "}
         likes
-      </div>
+      </div> */}
     </>
   )
 }

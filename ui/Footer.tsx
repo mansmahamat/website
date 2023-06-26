@@ -8,14 +8,14 @@ export const Footer = () => {
       <div className="text-gray-500">
         <div className="flex flex-col justify-between font-medium lg:flex-row">
           <div className="flex space-x-5">
-            <div>
+            {/* <div>
               <Link
                 href="/videos"
                 className={cx(LINK_SUBTLE_STYLES, FOCUS_VISIBLE_OUTLINE)}
               >
                 Videos
               </Link>
-            </div>
+            </div> */}
 
             <div>
               <Link
@@ -27,19 +27,19 @@ export const Footer = () => {
             </div>
 
             <a
-              href="https://twitter.com/delba_oliveira"
+              href="https://twitter.com/mansmahamat"
               className={cx(LINK_SUBTLE_STYLES, FOCUS_VISIBLE_OUTLINE)}
             >
               Twitter
             </a>
             <a
-              href="https://www.youtube.com/delba"
+              href="https://www.youtube.com/@manslifeinsweden"
               className={cx(LINK_SUBTLE_STYLES, FOCUS_VISIBLE_OUTLINE)}
             >
               YouTube
             </a>
             <a
-              href="https://github.com/delbaoliveira"
+              href="https://github.com/mansmahamat"
               className={cx(LINK_SUBTLE_STYLES, FOCUS_VISIBLE_OUTLINE)}
             >
               GitHub
@@ -76,6 +76,13 @@ export const Footer = () => {
           className={cx(LINK_SUBTLE_STYLES, FOCUS_VISIBLE_OUTLINE)}
         >
           Vercel
+        </a>
+        , by{" "}
+        <a
+          href="https://delba.dev/"
+          className={cx(LINK_SUBTLE_STYLES, FOCUS_VISIBLE_OUTLINE)}
+        >
+          Delba Oliveira
         </a>
       </p>
     </div>

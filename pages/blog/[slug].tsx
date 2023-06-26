@@ -64,11 +64,11 @@ export default function PostPage({
 
   const path = `/blog/${post.slug}`
 
-  const url = `https://delba.dev${path}`
-  const title = `${post.title} | delba.dev`
+  const url = `https://mansour-mahamat.dev${path}`
+  const title = `${post.title} | mansour-mahamat.dev`
   const ogImage = createOgImage({
     title: post.title,
-    meta: "delba.dev · " + post.publishedAtFormatted,
+    meta: "mansour-mahamat.dev · " + post.publishedAtFormatted,
   })
 
   return (
@@ -162,9 +162,9 @@ export default function PostPage({
           }}
         />
 
-        <div className="mt-16">
+        {/* <div className="mt-16">
           <LikeButton2 slug={post.slug} />
-        </div>
+        </div> */}
         {post.series && post.series.posts.length > 1 ? (
           <div className="mt-16">
             <PostSeries data={post.series} />

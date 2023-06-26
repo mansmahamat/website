@@ -86,9 +86,9 @@ export const LikeButton = ({ slug }: { slug: string }) => {
       </button>
 
       {/* Like counter text */}
-      <div className="text-lg text-rose-100/90">
+      {/* <div className="text-lg text-rose-100/90">
         {isLoading ? <LoadingDots /> : <span>{likes}</span>}
-      </div>
+      </div> */}
     </div>
   )
 }

@@ -1,5 +1,5 @@
 import { pick } from "contentlayer/client"
-import { Post, Video } from "contentlayer/generated"
+import { Post, Video, Projects } from "contentlayer/generated"
 
 export const allTagNames = ["Next.js", "MDX", "Next Conf", "React Conf"]
 export const allTagSlugs = ["next", "mdx", "next-conf", "react-conf"]
@@ -89,11 +89,13 @@ export const getPartialPost = (
     body,
     series,
     headings,
+    type,
   }: Post,
   allPosts: Post[],
 ) => ({
   title,
   slug,
+  type,
   publishedAtFormatted,
   description: description ?? null,
   body: {

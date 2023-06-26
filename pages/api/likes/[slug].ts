@@ -42,8 +42,8 @@ export default async function handler(
         ])
 
         res.json({
-          likes: post?.likes || 0,
-          currentUserLikes: user?.likes || 0,
+          likes: 0,
+          currentUserLikes: 0,
         })
 
         break

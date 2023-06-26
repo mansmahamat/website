@@ -49,16 +49,14 @@ export const PostMetrics = ({ slug }: { slug: string }) => {
         views
       </div>
 
-      <div className="text-rose-100/30">&middot;</div>
-
-      <div>
+      {/* <div>
         {likesIsError || likesIsLoading ? (
           <LoadingDots />
         ) : (
           <InlineMetric key={likes} stat={likes} />
         )}{" "}
         likes
-      </div>
+      </div> */}
     </>
   )
 }

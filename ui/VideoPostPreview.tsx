@@ -46,20 +46,21 @@ const Metrics = ({
 }
 
 export const VideoPostPreview = (
+  //@ts-ignore
   post: Pick<Video, "title" | "description" | "youtube" | "tags">,
 ) => {
   const { enabled, intersectionRef } = useEnabledOnFirstIntersection()
 
   return (
     <div ref={intersectionRef}>
-      <ContentLink href={post.youtube.url}>
+      <ContentLink href={"post.youtube.url"}>
         <div className="flex justify-between">
           <ContentLink.Title>{post.title}</ContentLink.Title>
           <ContentLink.Icon icon={YoutubeIcon} />
         </div>
 
         <ContentLink.Meta>
-          <div>{post.youtube.publishedAtFormatted}</div>
+          <div>{"post.youtube.publishedAtFormatted"}</div>
 
           {post.tags && post.tags.length > 0 ? (
             <>
@@ -71,17 +72,7 @@ export const VideoPostPreview = (
 
           <div className="text-rose-100/30">&middot;</div>
 
-          <div>{post.youtube.duration}</div>
-
-          {enabled ? (
-            <Metrics
-              id={post.youtube.id}
-              fallbackData={{
-                views: post.youtube.views,
-                likes: post.youtube.likes,
-              }}
-            />
-          ) : null}
+          <div>{"post.youtube.duration"}</div>
         </ContentLink.Meta>
 
         <ContentLink.Text>{post.description}</ContentLink.Text>
