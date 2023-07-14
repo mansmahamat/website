@@ -1,0 +1,1597 @@
+---
+title: "Let's build a Football standing app with Next JS"
+description: "Building a football standing app with Next.js and leveraging the power of API-Football can provide fans with real-time information on team rankings"
+publishedAt: "2022-07-13"
+status: "published"
+---
+
+In the fast-paced world of football, staying updated with the latest league standings is essential for die-hard fans. Building a football standing app with Next.js and leveraging the power of API-Football can provide fans with real-time information on team rankings, points, goals scored, and much more. In this blog post, we'll guide you through the process of creating a dynamic and intuitive football standing app that will keep fans informed and engaged throughout the season.
+
+# Setup
+
+### Setting Up the Project
+
+Installing Next.js: We'll start by setting up a new Next.js project and exploring its benefits for building interactive web applications.
+
+```terminal
+npx create-next-app@latest
+```
+
+On installation, you'll see the following prompts; I'll not use Typescript for this project:
+
+```terminal
+What is your project named? football-app
+Would you like to use TypeScript? No
+Would you like to use ESLint?  Yes
+Would you like to use Tailwind CSS? Yes
+Would you like to use `src/` directory? No
+Would you like to use App Router? (recommended)  Yes
+Would you like to customize the default import alias? No
+```
+
+After creating your project named "football-app" with Next.js, let's configure some additional settings:
+
+#### ESLint:
+
+ESLint is a powerful tool for maintaining code quality and consistency. Enabling ESLint will help you catch potential errors and enforce best practices. It's great that you've chosen to use ESLint in your project.
+
+#### Tailwind CSS:
+
+Tailwind CSS is a highly customizable CSS framework that offers utility classes to build responsive and modern user interfaces. By opting to use Tailwind CSS, you'll have access to a wide range of pre-built styles and components to enhance your app's UI.
+
+#### src/ Directory:
+
+Next.js allows you to organize your application code within a dedicated src/ directory. This can be beneficial for larger projects with multiple files and folders.
+
+#### App Router:
+
+The App Router provided by Next.js simplifies navigation and routing within your application, making it easier to manage different pages and views.
+
+#### Import Alias:
+
+By default, Next.js provides an alias for the src/ directory, which can be handy if you decide to use it in the future.
+
+Next.js now comes with built-in support for TypeScript, ESLint, and Tailwind CSS configuration, making it effortless to set up your development environment. These features will help you write clean, high-quality code and create visually appealing user interfaces.
+
+Get ready to dive into the development process and unleash the potential of your football app with Next.js!
+
+Open the project and run you dev server with :
+
+```terminal
+yarn dev
+// or
+npm run dev
+```
+
+This is the page that will open, the basic Next JS boilerplate
+
+<Img
+src={`/next-start.png`}
+width={2154}
+height={1232}
+bleed={false}
+caption="Next Starter"
+
+> </Img>
+
+# Building
+
+Open in app directory Page.js and clean up like this :
+
+```js showLineNumbers title="app/page.js" {5,12,20}
+import Image from "next/image"
+
+export default function Home() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-between p-24"></main>
+  )
+}
+```
+
+Now to get our API key, go visit [RAPID API FOOTBALL](https://rapidapi.com/api-sports/api/api-football/), register for your free and get your API keys, it's a freemium 100 calls per day be careful.
+
+First of all, we create a component called Headers, which will help us switch between the different European football leagues. We create an object called leagues with the ID of the league, for example Serie A is 135, we pass this ID to our API call and we get the Serie rankings.
+
+```js showLineNumbers title="component/Header.js" {5,12,20}
+import React from "react"
+
+function Header() {
+  const leagues = {
+    "Ligue 1 🇫🇷": 61,
+    "Serie A 🇮🇹": 135,
+    "Bundesliga 🇩🇪": 78,
+    "Premier Leage 🇬🇧": 39,
+    "Primera Division 🇪🇸": 140,
+    "Primeira Liga 🇵🇹": 94,
+    "Eredivise 🇳🇱": 88,
+  }
+
+  return (
+    <div className="relative bg-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="flex items-center justify-between border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
+          <div className="-my-2 -mr-2 md:hidden">
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+              aria-expanded="false"
+            >
+              <span className="sr-only">Open menu</span>
+            </button>
+          </div>
+          <nav className="flex space-x-12 overflow-auto">
+            {Object.keys(leagues).map(function (key) {
+              return (
+                <div key={key} className="relative">
+                  <button
+                    value={leagues[key]}
+                    type="button"
+                    className="group inline-flex items-center rounded-md bg-white text-base font-medium text-gray-500 outline-none hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-300 focus:ring-offset-2"
+                    aria-expanded="false"
+                  >
+                    <span>{key}</span>
+                  </button>
+                </div>
+              )
+            })}
+          </nav>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Header
+```
+
+After that, we'll create a dynamic page where we'll pass the league ID as a parameter and retrieve the data from that league.
+
+In the app folder, create a folder called [leagueID] and create page.js inside.
+
+```terminal
+
+├── README.md
+├── app.js
+├── app
+│   └── page.js
+│   └── layout.js
+│   └── global.css
+│   └── favicon.ico
+│   └── [leagueID]
+│           └── page.js
+└── public
+    └── next.svg
+```
+
+Inside this file create a basic component for now
+
+```js showLineNumbers title="app/[leagueID]/page.js" {4}
+import React from "react"
+
+function page() {
+  return <div>PAGE</div>
+}
+
+export default page
+```
+
+Now, to access this page, we need to update our Header.js file. To do this, we add a link to access the /[leagueID] page. All we need to do is add a link to the object key in our Header.js file.
+
+```js showLineNumbers title="component/Header.js" {33}
+import Link from "next/link"
+import React from "react"
+
+function Header() {
+  const leagues = {
+    "Ligue 1 🇫🇷": 61,
+    "Serie A 🇮🇹": 135,
+    "Bundesliga 🇩🇪": 78,
+    "Premier Leage 🇬🇧": 39,
+    "Primera Division 🇪🇸": 140,
+    "Primeira Liga 🇵🇹": 94,
+    "Eredivise 🇳🇱": 88,
+  }
+
+  return (
+    <div className="relative bg-white">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6">
+        <div className="flex items-center justify-between border-b-2 border-gray-100 py-6 md:justify-start md:space-x-10">
+          <div className="-my-2 -mr-2 md:hidden">
+            <button
+              type="button"
+              className="inline-flex items-center justify-center rounded-md bg-white p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500"
+              aria-expanded="false"
+            >
+              <span className="sr-only">Open menu</span>
+            </button>
+          </div>
+          <nav className="flex space-x-12 overflow-auto">
+            {Object.keys(leagues).map(function (key) {
+              return (
+                <div key={key} className="relative">
+                  <Link
+                    href={`/${leagues[key]}`}
+                    className="group inline-flex items-center rounded-md bg-white text-base font-medium text-gray-500 outline-none hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-green-300 focus:ring-offset-2"
+                    aria-expanded="false"
+                  >
+                    <span>{key}</span>
+                  </Link>
+                </div>
+              )
+            })}
+          </nav>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Header
+```
+
+Now, if you click on a league in your header, you should be taken to the new page.
+
+<Img
+src={`/leaguepage.png`}
+width={2154}
+height={1232}
+bleed={false}
+caption="LeagueID page"
+
+> </Img>
+
+Now let's focus on our app/[leagueID]/page.js. We're going to use the parameters in the URL to retrieve the data for the correct league, Next JS allows us to obtain the parameters in the page props, and thanks to this id we can make an API call to the different leagues.
+
+Page URL params
+app/[leagueID]/page.js
+
+URL
+/61
+
+Params
+leagueID: '61'
+
+```js showLineNumbers title="app/page.js" {5,12,20}
+import React from "react"
+
+function Page({ params }) {
+  const leagueID = params?.leagueID
+  return (
+    <div>
+      <h1>League ID: {leagueID}</h1>
+    </div>
+  )
+}
+
+export default Page
+```
+
+On the screen we display the params leagueID 👇
+
+<Img
+src={`/leaguepagedata.png`}
+width={2154}
+height={1232}
+bleed={false}
+
+> </Img>
+
+Go back in our editor and we'll utilize the API-Football endpoints to fetch the latest league standings, including team positions, points, wins, draws, and losses. You can check the RAPIDAPI doc to know all existing endpoints.
+
+You can check [Next JS documentation](https://nextjs.org/docs/app/building-your-application/data-fetching/fetching) about how to fetch data.
+
+```js showLineNumbers title="app/page.js" {5,14,27}
+import React from "react"
+
+async function getData(params) {
+  const url = `https://api-football-v1.p.rapidapi.com/v3/standings?season=2022&league=${params}`
+  const options = {
+    method: "GET",
+    headers: {
+      "X-RapidAPI-Key": "YOUR-API-KEY",
+      "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com",
+    },
+  }
+
+  const res = await fetch(url, options)
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+
+  // Recommendation: handle errors
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error("Failed to fetch data")
+  }
+
+  return res.json()
+}
+
+async function Page({ params }) {
+  const data = await getData(params?.leagueID)
+
+  const leagueInfos = data?.response[0]?.league
+
+  console.log(leagueInfos)
+
+  return (
+    <div>
+      <h1>League ID: </h1>
+    </div>
+  )
+}
+
+export default Page
+```
+
+If we click on French Ligue 1, the URL will be http://localhost:3000/61, the league ID here is 61 is, you can check your terminal, the console.log() is display here because it's a server page by default, In the terminal we have data :
+
+```json
+{
+  "league": {
+    "id": 61,
+    "name": "Ligue 1",
+    "country": "France",
+    "logo": "https://media-3.api-sports.io/football/leagues/61.png",
+    "flag": "https://media-2.api-sports.io/flags/fr.svg",
+    "season": 2022,
+    "standings": [
+      [
+        {
+          "rank": 1,
+          "team": {
+            "id": 85,
+            "name": "Paris Saint Germain",
+            "logo": "https://media-3.api-sports.io/football/teams/85.png"
+          },
+          "points": 85,
+          "goalsDiff": 49,
+          "group": "Ligue 1",
+          "form": "LDWWW",
+          "status": "same",
+          "description": "Promotion - Champions League (Group Stage: )",
+          "all": {
+            "played": 38,
+            "win": 27,
+            "draw": 4,
+            "lose": 7,
+            "goals": {
+              "for": 89,
+              "against": 40
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 13,
+            "draw": 2,
+            "lose": 4,
+            "goals": {
+              "for": 45,
+              "against": 25
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 14,
+            "draw": 2,
+            "lose": 3,
+            "goals": {
+              "for": 44,
+              "against": 15
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 2,
+          "team": {
+            "id": 116,
+            "name": "Lens",
+            "logo": "https://media-3.api-sports.io/football/teams/116.png"
+          },
+          "points": 84,
+          "goalsDiff": 39,
+          "group": "Ligue 1",
+          "form": "WWWWW",
+          "status": "same",
+          "description": "Promotion - Champions League (Group Stage: )",
+          "all": {
+            "played": 38,
+            "win": 25,
+            "draw": 9,
+            "lose": 4,
+            "goals": {
+              "for": 68,
+              "against": 29
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 17,
+            "draw": 1,
+            "lose": 1,
+            "goals": {
+              "for": 41,
+              "against": 13
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 8,
+            "draw": 8,
+            "lose": 3,
+            "goals": {
+              "for": 27,
+              "against": 16
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 3,
+          "team": {
+            "id": 81,
+            "name": "Marseille",
+            "logo": "https://media-2.api-sports.io/football/teams/81.png"
+          },
+          "points": 73,
+          "goalsDiff": 27,
+          "group": "Ligue 1",
+          "form": "LLLWL",
+          "status": "same",
+          "description": "Promotion - Champions League (Qualification: )",
+          "all": {
+            "played": 38,
+            "win": 22,
+            "draw": 7,
+            "lose": 9,
+            "goals": {
+              "for": 67,
+              "against": 40
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 10,
+            "draw": 4,
+            "lose": 5,
+            "goals": {
+              "for": 35,
+              "against": 24
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 12,
+            "draw": 3,
+            "lose": 4,
+            "goals": {
+              "for": 32,
+              "against": 16
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 4,
+          "team": {
+            "id": 94,
+            "name": "Rennes",
+            "logo": "https://media-2.api-sports.io/football/teams/94.png"
+          },
+          "points": 68,
+          "goalsDiff": 30,
+          "group": "Ligue 1",
+          "form": "WWWWL",
+          "status": "same",
+          "description": "Promotion - Europa League (Group Stage: )",
+          "all": {
+            "played": 38,
+            "win": 21,
+            "draw": 5,
+            "lose": 12,
+            "goals": {
+              "for": 69,
+              "against": 39
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 15,
+            "draw": 0,
+            "lose": 4,
+            "goals": {
+              "for": 43,
+              "against": 14
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 6,
+            "draw": 5,
+            "lose": 8,
+            "goals": {
+              "for": 26,
+              "against": 25
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 5,
+          "team": {
+            "id": 79,
+            "name": "Lille",
+            "logo": "https://media-3.api-sports.io/football/teams/79.png"
+          },
+          "points": 67,
+          "goalsDiff": 21,
+          "group": "Ligue 1",
+          "form": "DWWDL",
+          "status": "same",
+          "description": "Promotion - Europa Conference League (Qualification: )",
+          "all": {
+            "played": 38,
+            "win": 19,
+            "draw": 10,
+            "lose": 9,
+            "goals": {
+              "for": 65,
+              "against": 44
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 13,
+            "draw": 4,
+            "lose": 2,
+            "goals": {
+              "for": 40,
+              "against": 25
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 6,
+            "draw": 6,
+            "lose": 7,
+            "goals": {
+              "for": 25,
+              "against": 19
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 6,
+          "team": {
+            "id": 91,
+            "name": "Monaco",
+            "logo": "https://media-2.api-sports.io/football/teams/91.png"
+          },
+          "points": 65,
+          "goalsDiff": 12,
+          "group": "Ligue 1",
+          "form": "LLLDW",
+          "status": "same",
+          "description": null,
+          "all": {
+            "played": 38,
+            "win": 19,
+            "draw": 8,
+            "lose": 11,
+            "goals": {
+              "for": 70,
+              "against": 58
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 9,
+            "draw": 3,
+            "lose": 7,
+            "goals": {
+              "for": 37,
+              "against": 33
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 10,
+            "draw": 5,
+            "lose": 4,
+            "goals": {
+              "for": 33,
+              "against": 25
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 7,
+          "team": {
+            "id": 80,
+            "name": "Lyon",
+            "logo": "https://media-2.api-sports.io/football/teams/80.png"
+          },
+          "points": 62,
+          "goalsDiff": 18,
+          "group": "Ligue 1",
+          "form": "LWWLW",
+          "status": "same",
+          "description": null,
+          "all": {
+            "played": 38,
+            "win": 18,
+            "draw": 8,
+            "lose": 12,
+            "goals": {
+              "for": 65,
+              "against": 47
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 10,
+            "draw": 5,
+            "lose": 4,
+            "goals": {
+              "for": 35,
+              "against": 19
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 8,
+            "draw": 3,
+            "lose": 8,
+            "goals": {
+              "for": 30,
+              "against": 28
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 8,
+          "team": {
+            "id": 99,
+            "name": "Clermont Foot",
+            "logo": "https://media-3.api-sports.io/football/teams/99.png"
+          },
+          "points": 59,
+          "goalsDiff": -4,
+          "group": "Ligue 1",
+          "form": "WWLWD",
+          "status": "same",
+          "description": null,
+          "all": {
+            "played": 38,
+            "win": 17,
+            "draw": 8,
+            "lose": 13,
+            "goals": {
+              "for": 45,
+              "against": 49
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 9,
+            "draw": 3,
+            "lose": 7,
+            "goals": {
+              "for": 20,
+              "against": 28
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 8,
+            "draw": 5,
+            "lose": 6,
+            "goals": {
+              "for": 25,
+              "against": 21
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 9,
+          "team": {
+            "id": 84,
+            "name": "Nice",
+            "logo": "https://media-2.api-sports.io/football/teams/84.png"
+          },
+          "points": 58,
+          "goalsDiff": 11,
+          "group": "Ligue 1",
+          "form": "WWDLW",
+          "status": "same",
+          "description": null,
+          "all": {
+            "played": 38,
+            "win": 15,
+            "draw": 13,
+            "lose": 10,
+            "goals": {
+              "for": 48,
+              "against": 37
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 7,
+            "draw": 7,
+            "lose": 5,
+            "goals": {
+              "for": 24,
+              "against": 18
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 8,
+            "draw": 6,
+            "lose": 5,
+            "goals": {
+              "for": 24,
+              "against": 19
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 10,
+          "team": {
+            "id": 97,
+            "name": "Lorient",
+            "logo": "https://media-3.api-sports.io/football/teams/97.png"
+          },
+          "points": 55,
+          "goalsDiff": -1,
+          "group": "Ligue 1",
+          "form": "WLLDW",
+          "status": "same",
+          "description": null,
+          "all": {
+            "played": 38,
+            "win": 15,
+            "draw": 10,
+            "lose": 13,
+            "goals": {
+              "for": 52,
+              "against": 53
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 9,
+            "draw": 4,
+            "lose": 6,
+            "goals": {
+              "for": 26,
+              "against": 21
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 6,
+            "draw": 6,
+            "lose": 7,
+            "goals": {
+              "for": 26,
+              "against": 32
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 11,
+          "team": {
+            "id": 93,
+            "name": "Reims",
+            "logo": "https://media-3.api-sports.io/football/teams/93.png"
+          },
+          "points": 51,
+          "goalsDiff": 0,
+          "group": "Ligue 1",
+          "form": "LLDLW",
+          "status": "same",
+          "description": null,
+          "all": {
+            "played": 38,
+            "win": 12,
+            "draw": 15,
+            "lose": 11,
+            "goals": {
+              "for": 45,
+              "against": 45
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 8,
+            "draw": 6,
+            "lose": 5,
+            "goals": {
+              "for": 28,
+              "against": 23
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 4,
+            "draw": 9,
+            "lose": 6,
+            "goals": {
+              "for": 17,
+              "against": 22
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 12,
+          "team": {
+            "id": 82,
+            "name": "Montpellier",
+            "logo": "https://media-3.api-sports.io/football/teams/82.png"
+          },
+          "points": 50,
+          "goalsDiff": 3,
+          "group": "Ligue 1",
+          "form": "WLWDL",
+          "status": "same",
+          "description": null,
+          "all": {
+            "played": 38,
+            "win": 15,
+            "draw": 5,
+            "lose": 18,
+            "goals": {
+              "for": 65,
+              "against": 62
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 7,
+            "draw": 3,
+            "lose": 9,
+            "goals": {
+              "for": 29,
+              "against": 29
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 8,
+            "draw": 2,
+            "lose": 9,
+            "goals": {
+              "for": 36,
+              "against": 33
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 13,
+          "team": {
+            "id": 96,
+            "name": "Toulouse",
+            "logo": "https://media-2.api-sports.io/football/teams/96.png"
+          },
+          "points": 48,
+          "goalsDiff": -6,
+          "group": "Ligue 1",
+          "form": "WDDDD",
+          "status": "same",
+          "description": "Promotion - Europa League (Group Stage: )",
+          "all": {
+            "played": 38,
+            "win": 13,
+            "draw": 9,
+            "lose": 16,
+            "goals": {
+              "for": 51,
+              "against": 57
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 6,
+            "draw": 6,
+            "lose": 7,
+            "goals": {
+              "for": 27,
+              "against": 27
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 7,
+            "draw": 3,
+            "lose": 9,
+            "goals": {
+              "for": 24,
+              "against": 30
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 14,
+          "team": {
+            "id": 106,
+            "name": "Stade Brestois 29",
+            "logo": "https://media-2.api-sports.io/football/teams/106.png"
+          },
+          "points": 44,
+          "goalsDiff": -10,
+          "group": "Ligue 1",
+          "form": "LWWWL",
+          "status": "same",
+          "description": null,
+          "all": {
+            "played": 38,
+            "win": 11,
+            "draw": 11,
+            "lose": 16,
+            "goals": {
+              "for": 44,
+              "against": 54
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 7,
+            "draw": 5,
+            "lose": 7,
+            "goals": {
+              "for": 24,
+              "against": 26
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 4,
+            "draw": 6,
+            "lose": 9,
+            "goals": {
+              "for": 20,
+              "against": 28
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 15,
+          "team": {
+            "id": 95,
+            "name": "Strasbourg",
+            "logo": "https://media-2.api-sports.io/football/teams/95.png"
+          },
+          "points": 40,
+          "goalsDiff": -8,
+          "group": "Ligue 1",
+          "form": "LDDWW",
+          "status": "same",
+          "description": null,
+          "all": {
+            "played": 38,
+            "win": 9,
+            "draw": 13,
+            "lose": 16,
+            "goals": {
+              "for": 51,
+              "against": 59
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 5,
+            "draw": 7,
+            "lose": 7,
+            "goals": {
+              "for": 25,
+              "against": 26
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 4,
+            "draw": 6,
+            "lose": 9,
+            "goals": {
+              "for": 26,
+              "against": 33
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 16,
+          "team": {
+            "id": 83,
+            "name": "Nantes",
+            "logo": "https://media-3.api-sports.io/football/teams/83.png"
+          },
+          "points": 36,
+          "goalsDiff": -18,
+          "group": "Ligue 1",
+          "form": "WLLDL",
+          "status": "same",
+          "description": null,
+          "all": {
+            "played": 38,
+            "win": 7,
+            "draw": 15,
+            "lose": 16,
+            "goals": {
+              "for": 37,
+              "against": 55
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 5,
+            "draw": 8,
+            "lose": 6,
+            "goals": {
+              "for": 20,
+              "against": 26
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 2,
+            "draw": 7,
+            "lose": 10,
+            "goals": {
+              "for": 17,
+              "against": 29
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 17,
+          "team": {
+            "id": 108,
+            "name": "Auxerre",
+            "logo": "https://media-3.api-sports.io/football/teams/108.png"
+          },
+          "points": 35,
+          "goalsDiff": -28,
+          "group": "Ligue 1",
+          "form": "LDLLD",
+          "status": "same",
+          "description": "Relegation - Ligue 2",
+          "all": {
+            "played": 38,
+            "win": 8,
+            "draw": 11,
+            "lose": 19,
+            "goals": {
+              "for": 35,
+              "against": 63
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 5,
+            "draw": 7,
+            "lose": 7,
+            "goals": {
+              "for": 18,
+              "against": 28
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 3,
+            "draw": 4,
+            "lose": 12,
+            "goals": {
+              "for": 17,
+              "against": 35
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 18,
+          "team": {
+            "id": 98,
+            "name": "Ajaccio",
+            "logo": "https://media-1.api-sports.io/football/teams/98.png"
+          },
+          "points": 26,
+          "goalsDiff": -51,
+          "group": "Ligue 1",
+          "form": "WLLLD",
+          "status": "same",
+          "description": "Relegation - Ligue 2",
+          "all": {
+            "played": 38,
+            "win": 7,
+            "draw": 5,
+            "lose": 26,
+            "goals": {
+              "for": 23,
+              "against": 74
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 4,
+            "draw": 3,
+            "lose": 12,
+            "goals": {
+              "for": 10,
+              "against": 30
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 3,
+            "draw": 2,
+            "lose": 14,
+            "goals": {
+              "for": 13,
+              "against": 44
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 19,
+          "team": {
+            "id": 110,
+            "name": "Estac Troyes",
+            "logo": "https://media-3.api-sports.io/football/teams/110.png"
+          },
+          "points": 24,
+          "goalsDiff": -36,
+          "group": "Ligue 1",
+          "form": "DLDLL",
+          "status": "same",
+          "description": "Relegation - Ligue 2",
+          "all": {
+            "played": 38,
+            "win": 4,
+            "draw": 12,
+            "lose": 22,
+            "goals": {
+              "for": 45,
+              "against": 81
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 1,
+            "draw": 11,
+            "lose": 7,
+            "goals": {
+              "for": 19,
+              "against": 30
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 3,
+            "draw": 1,
+            "lose": 15,
+            "goals": {
+              "for": 26,
+              "against": 51
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        },
+        {
+          "rank": 20,
+          "team": {
+            "id": 77,
+            "name": "Angers",
+            "logo": "https://media-2.api-sports.io/football/teams/77.png"
+          },
+          "points": 18,
+          "goalsDiff": -48,
+          "group": "Ligue 1",
+          "form": "LWDLL",
+          "status": "same",
+          "description": "Relegation - Ligue 2",
+          "all": {
+            "played": 38,
+            "win": 4,
+            "draw": 6,
+            "lose": 28,
+            "goals": {
+              "for": 33,
+              "against": 81
+            }
+          },
+          "home": {
+            "played": 19,
+            "win": 3,
+            "draw": 3,
+            "lose": 13,
+            "goals": {
+              "for": 20,
+              "against": 36
+            }
+          },
+          "away": {
+            "played": 19,
+            "win": 1,
+            "draw": 3,
+            "lose": 15,
+            "goals": {
+              "for": 13,
+              "against": 45
+            }
+          },
+          "update": "2023-06-03T00:00:00+00:00"
+        }
+      ]
+    ]
+  }
+}
+```
+
+Let's create a component called Standing to display the standing, the logo and all informations from the API
+
+```js showLineNumbers title="components/Standing.js" {5,12,20}
+import React from "react"
+
+function Standing({ leagueInfos }) {
+  console.log(leagueInfos)
+  return <div className="container mx-auto px-4 sm:px-8"></div>
+}
+
+export default Standing
+```
+
+Now we're going to create a table that we'll use to display this as a column heading, we'll put in the ranking, the team, won; lost, drawn... We'll make a map of this table and display it in a < th > tag.
+
+```js showLineNumbers title="components/Standing.js" {5,12,20}
+import React from "react"
+
+function Standing({ leagueInfos }) {
+  const data = [
+    "Ranking",
+    "Team",
+    "GP",
+    "W",
+    "D",
+    "L",
+    "GF",
+    "GA",
+    "GD",
+    "PTS",
+    "Shape",
+  ]
+
+  const filteredData = data.map((title, index) => (
+    <th
+      key={index}
+      className="border-red-20 w-auto border-b-2 bg-green-200 px-5 py-3 text-left text-xs font-semibold uppercase text-gray-600 "
+    >
+      {title}
+    </th>
+  ))
+
+  return <div className="container mx-auto px-4 sm:px-8"></div>
+}
+
+export default Standing
+```
+
+- Rank: The club's rank in the standings.
+- Team: The club's name.
+- Played: The number of games the club has played.
+- Win: The number of games the club has won.
+- Draw: The number of games the club has drawn.
+- Lose: The number of games the club has lost.
+- Goals for: The number of goals the club has scored.
+- Goals against: The number of goals the club has conceded.
+- Goals difference: The difference between the club's goals scored and goals conceded.
+- Points: The number of points the club has accumulated.
+- Form: The club's recent form (e.g., "LDWWW").
+
+We are now going to create each line of our ranking with the information for each club, by storing the table lines in a clubs const.
+
+```js showLineNumbers title="components/Standing.js" {5,12,20}
+import React from "react"
+
+function Standing({ leagueInfos }) {
+  const data = [
+    "Ranking",
+    "Team",
+    "GP",
+    "W",
+    "D",
+    "L",
+    "GF",
+    "GA",
+    "GD",
+    "PTS",
+    "Shape",
+  ]
+
+  const filteredData = data.map((title, index) => (
+    <th
+      key={index}
+      className="border-red-20 w-auto border-b-2 bg-green-200 px-5 py-3 text-left text-xs font-semibold uppercase text-gray-600 "
+    >
+      {title}
+    </th>
+  ))
+
+  const clubs = leagueInfos.standings[0].map((club) => (
+    <tr key={club.rank}>
+      <td className="w-32 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        <div className="flex items-center">
+          <div className="flex-shrink-0 ">
+            <p>{club.rank}</p>
+          </div>
+        </div>
+      </td>
+      <td className="w-36 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        <Image
+          width={40}
+          height={40}
+          className="h-10  w-10 rounded-full"
+          src={club.team.logo}
+          alt=""
+        />
+      </td>
+      <td className="w-36 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        <a href="#">{club.team.name}</a>
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.all.played}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.all.win}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.all.draw}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.all.lose}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.all.goals.for}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.all.goals.against}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.goalsDiff}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.points}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.form}
+      </td>
+    </tr>
+  ))
+
+  return <div className="container mx-auto px-4 sm:px-8"></div>
+}
+
+export default Standing
+```
+
+The last step will now be to display this information on screen by passing it into our empty div
+
+```js showLineNumbers title="components/Standing.js" {5,12,20}
+import Image from "next/image"
+import React from "react"
+
+function Standing({ leagueInfos }) {
+  const data = [
+    "Ranking",
+    "Team",
+    "GP",
+    "W",
+    "D",
+    "L",
+    "GF",
+    "GA",
+    "GD",
+    "PTS",
+    "Shape",
+  ]
+
+  const filteredData = data.map((title, index) => (
+    <th
+      key={index}
+      className="border-red-20 w-auto border-b-2 bg-green-200 px-5 py-3 text-left text-xs font-semibold uppercase text-gray-600 "
+    >
+      {title}
+    </th>
+  ))
+
+  const clubs = leagueInfos.standings[0].map((club) => (
+    <tr key={club.rank}>
+      <td className="w-32 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        <div className="flex items-center">
+          <div className="flex-shrink-0 ">
+            <p>{club.rank}</p>
+          </div>
+        </div>
+      </td>
+      <td className="w-36 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        <Image
+          width={40}
+          height={40}
+          className="h-10  w-10 rounded-full"
+          src={club.team.logo}
+          alt=""
+        />
+      </td>
+      <td className="w-36 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        <a href="#">{club.team.name}</a>
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.all.played}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.all.win}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.all.draw}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.all.lose}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.all.goals.for}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.all.goals.against}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.goalsDiff}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.points}
+      </td>
+      <td className="w-10 border-b border-gray-200 bg-white px-2 py-2 text-sm">
+        {club.form}
+      </td>
+    </tr>
+  ))
+
+  return (
+    <div className="container mx-auto px-4 sm:px-8">
+      <div className="py-8">
+        <div className="flex space-x-4 space-y-6">
+          <Image
+            height={100}
+            width={100}
+            className=" h-24"
+            src={leagueInfos.logo}
+            alt={leagueInfos.name}
+          />
+          <h2 className="text-xl font-semibold leading-tight">
+            {leagueInfos.name}, {leagueInfos.country}
+          </h2>
+          <Image
+            height={30}
+            width={30}
+            className=" h-7"
+            src={leagueInfos.flag}
+            alt={leagueInfos.name}
+          />
+        </div>
+        <div className="-mx-4 w-full overflow-x-scroll px-4 py-4 sm:-mx-8 sm:px-8 xl:overflow-x-hidden">
+          <div className="inline-block min-w-full rounded-lg shadow ">
+            <table className="min-w-full leading-normal">
+              <thead>
+                <tr>{filteredData}</tr>
+              </thead>
+              <tbody>{clubs}</tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default Standing
+```
+
+Before continuing, we need to authorise Next JS to use the image of our API, otherwise we'll get an error, so we're going to modify the next.config.js file
+
+```js showLineNumbers next.config.js
+/** @type {import('next').NextConfig} */
+
+module.exports = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "media-2.api-sports.io",
+      },
+      {
+        protocol: "https",
+        hostname: "media-3.api-sports.io",
+      },
+      {
+        protocol: "https",
+        hostname: "media-1.api-sports.io",
+      },
+    ],
+  },
+}
+```
+
+To see the standings on the screen we have to import Standings in our app/[leagueID] and passe leagueInfos as a Props
+
+```js showLineNumbers title="app/[leagueID]/page.js" {5,12,20}
+import Standing from "@/components/Standing"
+import React from "react"
+
+async function getData(params) {
+  const url = `https://api-football-v1.p.rapidapi.com/v3/standings?season=2022&league=${params}`
+  const options = {
+    method: "GET",
+    headers: {
+      "X-RapidAPI-Key": "YOUR-API-KEY",
+      "X-RapidAPI-Host": "api-football-v1.p.rapidapi.com",
+    },
+  }
+
+  const res = await fetch(url, options)
+  // The return value is *not* serialized
+  // You can return Date, Map, Set, etc.
+
+  // Recommendation: handle errors
+  if (!res.ok) {
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error("Failed to fetch data")
+  }
+
+  return res.json()
+}
+
+async function Page({ params }) {
+  const data = await getData(params?.leagueID)
+
+  const leagueInfos = data?.response[0]?.league
+
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      <Standing leagueInfos={leagueInfos} />
+    </main>
+  )
+}
+
+export default Page
+```
+
+Here we are, using an API to create our football rankings, and we've seen a few Next JS methods.
+
+<Img
+src={`/screenpl.png`}
+width={2154}
+height={1232}
+bleed={false}
+
+> </Img>
+
+### Conclusion
+
+With Next.js and API-Football, we've built a powerful football standing app that brings fans closer to the action on and off the field. By following the steps outlined in this blog post, you can create a feature-rich app that keeps fans informed, engaged, and immersed in the world of football standings.
+
+##### Github repo link
+
+https://github.com/mansmahamat/football-next-js
